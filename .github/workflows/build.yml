@@ -23,9 +23,14 @@ jobs:
         run: |
           Add-Content $env:GITHUB_PATH "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw32\bin"
 
+      - name: Check GCC version and arch
+        run: |
+          gcc -v
+          gcc -dumpmachine
+
       - name: Compile DLL
         run: |
-          i686-w64-mingw32-gcc -m32 -shared -o dplay.dll dllmain.c dplay.def
+          gcc -m32 -shared -o dplay.dll dllmain.c dplay.def
 
       - name: Upload DLL artifact
         uses: actions/upload-artifact@v4
