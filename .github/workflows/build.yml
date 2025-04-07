@@ -14,14 +14,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up MinGW
-        run: |
-          choco install mingw -y
-
-      - name: Force 32-bit MinGW
-        shell: pwsh
-        run: |
-          Add-Content $env:GITHUB_PATH "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw32\bin"
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          install: mingw-w64-i686-gcc
 
       - name: Check GCC version and arch
         run: |
@@ -29,6 +26,7 @@ jobs:
           gcc -dumpmachine
 
       - name: Compile DLL
+        shell: msys2 {0}
         run: |
           gcc -m32 -shared -o dplay.dll dllmain.c dplay.def
 
