@@ -1,0 +1,31 @@
+name: Build DirectPlay (dummy)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up MinGW (32-bit)
+        run: |
+          choco install mingw -y
+          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw32\bin" >> $env:GITHUB_PATH
+
+      - name: Compile DLL
+        run: |
+          gcc -m32 -shared -o dplay.dll dllmain.c dplay.def
+
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dplay
+          path: |
+            dplay.dll
